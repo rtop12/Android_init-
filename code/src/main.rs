@@ -22,7 +22,8 @@ fn main() {
 
     // 2. 挂载 /proc (加载内核模块必须要用到)
     mkdir("/proc", Mode::from_raw_mode(0o755)).ok();
-    if let Err(e) = mount("proc", "/proc", "proc", MountFlags::empty(), None) {
+    // 【关键修复】显式指定 None 的类型为 Option<&CStr>
+    if let Err(e) = mount("proc", "/proc", "proc", MountFlags::empty(), None::<&std::ffi::CStr>) {
         eprintln!("FATAL: Cannot mount /proc: {}", e);
     }
 
