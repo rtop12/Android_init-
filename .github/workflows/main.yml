@@ -1,4 +1,4 @@
-name: Build Rust init
+name: Build Custom Init
 
 on:
   push:
@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,19 +23,17 @@ jobs:
           sudo apt-get install -y musl-tools gcc-aarch64-linux-gnu
 
       - name: Build
-        # 【关键】指定工作目录为 code，这样 cargo 才能找到 Cargo.toml
         working-directory: code
         run: cargo build --release --target aarch64-unknown-linux-musl
 
       - name: Verify binary
         working-directory: code
         run: |
-          file target/aarch64-unknown-linux-musl/release/my_init
-          ls -lh target/aarch64-unknown-linux-musl/release/my_init
+          file target/aarch64-unknown-linux-musl/release/ksuinit
+          ls -lh target/aarch64-unknown-linux-musl/release/ksuinit
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: my_init-aarch64
-          # 【关键】从仓库根目录去拿 code 文件夹下的产物
-          path: code/target/aarch64-unknown-linux-musl/release/my_init
+          name: init-aarch64
+          path: code/target/aarch64-unknown-linux-musl/release/ksuinit
